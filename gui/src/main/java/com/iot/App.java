@@ -107,6 +107,21 @@ public class App extends Application {
         
         // Creates a slider
         Slider slider = p.createSlider();
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number newVal) {
+            // TODO Auto-generated method stub
+            valveOpeningDegrees = newVal.floatValue();
+            if(state==2){
+
+                console.sendMsg("valve-" + valveOpeningDegrees);
+                System.out.println("valve-" + valveOpeningDegrees);
+            }
+        }
+        
+       });
+
+        
         LineChart<Number,Number> chart = p.createLineChart();
         chart.getData().add(series);
         HBox selectors = new HBox();
