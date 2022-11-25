@@ -34,8 +34,11 @@ public class App extends Application {
     boolean smartLight;
 
     long start;
+
     @Override
     public void start( Stage stage) throws Exception {
+        
+        
         console = null;
         final Timer clockTimer = new Timer();
 
