@@ -1,7 +1,7 @@
 package com.iot;
 
 import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,9 +34,8 @@ public class App extends Application {
     boolean smartLight;
 
     long start;
-
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start( Stage stage) throws Exception {
         console = null;
         final Timer clockTimer = new Timer();
 
@@ -80,7 +79,7 @@ public class App extends Application {
                 });
 
         series.setName("water");
-        series.getData().add(new XYChart.Data(0, 0));
+        series.getData().add(new XYChart.Data<>(0, 0));
 
         // Creates a slider
         Slider slider = p.createSlider();
@@ -106,7 +105,7 @@ public class App extends Application {
         selectors.getChildren().add(portComboBox);
 
         BorderPane root = new BorderPane(chart, selectors, null, null, slider); // center,top,right,bottom,left
-        root.setAlignment(slider, Pos.CENTER_LEFT);
+        BorderPane.setAlignment(slider, Pos.CENTER_LEFT);
 
         Scene scene = new Scene(root, 1000, 1000);
         // add Scene to the frame
@@ -136,7 +135,7 @@ public class App extends Application {
                             rawData.addAll(console.retiriveMessages());
 
                         } catch (Exception e) {
-                            // TODO: handle exception
+                            
                             System.out.println("error in serial communiation");
                         }
                         series = p.populateChart(parser.getNewChartData(rawData), series);
@@ -163,15 +162,8 @@ public class App extends Application {
         System.exit(0);
     }
 
-    // public Series updateChart(float value){
-
-    private SerialCommChannel updateChannel(SerialCommChannel c, String port, int baud) throws Exception {
-        c.close();
-        return new SerialCommChannel(port, baud);
-    }
-
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 
 }

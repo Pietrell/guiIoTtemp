@@ -1,14 +1,11 @@
 package com.iot;
-
 import java.util.ArrayList;
 import java.util.concurrent.*;
 import jssc.*;
 
 /**
  * Comm channel implementation based on serial port.
- * 
  * @author aricci
- *
  */
 public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 
@@ -52,13 +49,11 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 
 	@Override
 	public String receiveMsg() throws InterruptedException {
-		// TODO Auto-generated method stub
 		return queue.take();
 	}
 
 	@Override
 	public boolean isMsgAvailable() {
-		// TODO Auto-generated method stub
 		return !queue.isEmpty();
 	}
 
@@ -77,6 +72,7 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 		}
 	}
 
+	//TODO: Fix warning
 	public void serialEvent(SerialPortEvent event) {
 		/* if there are bytes received in the input buffer */
 		if (event.isRXCHAR()) {
@@ -115,7 +111,6 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 
 	@Override
 	public ArrayList<String> retiriveMessages() {
-		// TODO Auto-generated method stub
 		ArrayList<String> msgs = new ArrayList<>();
 		if (isMsgAvailable()) {
 			for (String ms : queue) {

@@ -23,13 +23,13 @@ public class GUIFactoryImpl implements GUIFactory {
 
     @Override
     public ComboBox<String> createSelector(List<String> options) {
-        // TODO Auto-generated method stub
-
-        ComboBox<String> b = new ComboBox();
+        
+        ComboBox<String> b = new ComboBox<>();
         b.setItems(FXCollections.observableArrayList(options));
         return b;
     }
 
+    //TODO: Fix warning
     @Override
     public Text createText(String text) {
         Text t = new Text(text);
@@ -56,10 +56,10 @@ public class GUIFactoryImpl implements GUIFactory {
 
         return chart;
     }
-
+    //TODO: Fix warning
     @Override
     public Slider createSlider() {
-        // TODO Auto-generated method stub
+       
         Slider slider = new Slider(0, 100, 0);
         slider.setCenterShape(true);
         slider.setShowTickMarks(true);
@@ -77,7 +77,6 @@ public class GUIFactoryImpl implements GUIFactory {
     @Override
     public XYChart.Series<Number, Number> populateChart(ArrayList<Float> newData,
             XYChart.Series<Number, Number> oldSerie) {
-        // TODO Auto-generated method stub
         XYChart.Series<Number, Number> newSerie = new XYChart.Series<>();
         int last = oldSerie.getData().size();
         newSerie.getData().addAll(oldSerie.getData());
