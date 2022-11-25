@@ -1,6 +1,5 @@
 package com.iot;
 
-
 import javafx.scene.control.Slider;
 
 import java.util.ArrayList;
@@ -11,13 +10,16 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.text.Text;
 
-
 public interface GUIFactory {
 
     ComboBox<String> createSelector(List<String> options);
+
     Text createText(String text);
-    LineChart<Number,Number> createLineChart();
-    XYChart.Series<Number,Number> populateChart(ArrayList<Float> data, XYChart.Series<Number,Number> serie);
+
+    LineChart<Number, Number> createLineChart();
+
+    XYChart.Series<Number, Number> populateChart(ArrayList<Float> data, XYChart.Series<Number, Number> serie);
+
     Slider createSlider();
-   
+
 }
