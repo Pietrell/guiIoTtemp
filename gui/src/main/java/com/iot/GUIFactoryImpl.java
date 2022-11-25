@@ -86,7 +86,8 @@ public class GUIFactoryImpl implements GUIFactory{
        newSerie.getData().addAll(serie.getData());
         for (Float item : data) {
             now = System.currentTimeMillis() - startTime;
-            newSerie.getData().add(new XYChart.Data<>(now,item));
+            newSerie.getData().add(new XYChart.Data<>(now,item.floatValue()));
+            System.out.println("nuovo dato aggiunto ///"  + item.floatValue());
         }
                            
        

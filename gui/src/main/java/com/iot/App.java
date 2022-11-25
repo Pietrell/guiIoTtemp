@@ -115,6 +115,7 @@ public class App extends Application {
         
         LineChart<Number,Number> chart = p.createLineChart();
         chart.getData().add(series);
+        
         HBox selectors = new HBox();
         selectors.getChildren().add(portComboBox);
         

@@ -20,11 +20,14 @@ public class SerialParser  {
 			String[] parts = item.split("-");
 			System.out.println(parts[0]);
 			System.out.println(parts[1]);
-			if(parts[0]=="waterlevel"){
+			if(parts.length==2 && parts[0]=="waterlevel" ){
 				if(parts[1]!="")
-				data.add(Float.parseFloat(parts[1]) );
+				if(!data.add(Float.parseFloat(parts[1]) )){
+					System.out.println("non viene inserito niene");
+						
+				}
+
 			}
-			System.out.println(parts[1]);
 		}
 		return data;
 	}
