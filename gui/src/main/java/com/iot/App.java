@@ -8,6 +8,9 @@ import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -51,30 +54,25 @@ public class App extends Application {
         p = new GUIFactoryImpl();
         series = new XYChart.Series<>();
         
-        baud.add("4800");
-        baud.add("9600");
-        baud.add("14400");
+        
         ArrayList<String> port = new ArrayList<>();
        
         for (String string : SerialPortList.getPortNames()) {
             port.add(string);
         }
-        
-        final ComboBox<String> baudRateComboBox = p.createSelector(baud);
         final ComboBox<String> portComboBox = p.createSelector(port);
 
-        baudRateComboBox.getSelectionModel().select(1);
         //check for presenc of com port
         portComboBox.getSelectionModel().select(0);
         
-        if(port.size()!=0){
-            console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 9600);
-            // console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 
-            //                 Integer.valueOf( baudRateComboBox.getItems().get(2)));
+        // if(port.size()!=0){
+        //     console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 9600);
+        //     // console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 
+        //     //                 Integer.valueOf( baudRateComboBox.getItems().get(2)));
             
-        }else{
-            System.out.println("common interface port not found, did you connect Arduino?");
-        }
+        // }else{
+        //     System.out.println("common interface port not found, did you connect Arduino?");
+        // }
         //communication update based on combobox values
         // baudRateComboBox.setOnAction((event) -> {
            
@@ -89,44 +87,48 @@ public class App extends Application {
    
         // });
 
-        // portComboBox.setOnAction((event) -> {
+        portComboBox.setOnAction((event) -> {
            
-        //     String pt = portComboBox.getValue();
-        //     int b = Integer.valueOf( baudRateComboBox.getValue());
-        //     try {
-        //         console = updateChannel(console,pt ,b );
+            String pt = portComboBox.getValue();
+            int b = Integer.valueOf( portComboBox.getValue());
+            try {
+                if(console!=null){
+                    console.close();
+                    console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 9600);
+                }
+                console = updateChannel(console,pt ,b );
                 
-        //     } catch (Exception e) {
-        //         System.out.println(e.toString());
-        //     }
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
             
-        // });
+        });
 
         series.setName("water");
         series.getData().add(new XYChart.Data((System.currentTimeMillis() - start), 0));
         
         // Creates a slider
         Slider slider = p.createSlider();
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
+        
+       slider.valueProperty().addListener(new ChangeListener<Number>() {
+
         @Override
         public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number newVal) {
-            // TODO Auto-generated method stub
-            valveOpeningDegrees = newVal.floatValue();
-            if(state==2){
-
+            
+            if(state == 2){
+                valveOpeningDegrees = newVal.floatValue();
                 console.sendMsg("valve-" + valveOpeningDegrees);
-                System.out.println("valve-" + valveOpeningDegrees);
             }
+            
         }
         
-       });
+       });   
 
         
         LineChart<Number,Number> chart = p.createLineChart();
         chart.getData().add(series);
         HBox selectors = new HBox();
         selectors.getChildren().add(portComboBox);
-        selectors.getChildren().add(baudRateComboBox);
         
         BorderPane root = new BorderPane(chart,selectors,null,null,slider); //center,top,right,bottom,left
         root.setAlignment(slider, Pos.CENTER_LEFT);
@@ -153,7 +155,13 @@ public class App extends Application {
                     @Override  public void run() {
                         /*methods to execute every n seconds */
                         rawData.clear();
-                        rawData.addAll(console.retiriveMessages());                          
+                        try {
+                            rawData.addAll(console.retiriveMessages());                          
+                            
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                            System.out.println("no messages in serial communiation");
+                        }
                         series = p.populateChart(parser.getNewChartData(rawData), series, start);
                         valveOpeningDegrees = parser.getServoPosition(rawData);
                         state = parser.getState(rawData);
@@ -163,7 +171,22 @@ public class App extends Application {
             }
         }, 0, 500  // Sleep for 1 seconds since that is how long it is between
         );              
+
+
+
+
+
     }
+
+    @Override
+public void stop(){
+    if(console!=null){
+        console.close();
+    }
+    System.out.println("console closed");
+    // Save file
+    System.exit(0);
+}
 
     // public Series updateChart(float value){
 
