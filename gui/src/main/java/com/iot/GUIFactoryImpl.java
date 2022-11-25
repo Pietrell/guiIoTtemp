@@ -79,22 +79,16 @@ public class GUIFactoryImpl implements GUIFactory{
     }
 
     @Override
-    public XYChart.Series<Number,Number>  populateChart(ArrayList<Float> data, XYChart.Series<Number,Number> serie, long startTime) {
+    public XYChart.Series<Number,Number>  populateChart(ArrayList<Float> newData, XYChart.Series<Number,Number> oldSerie) {
         // TODO Auto-generated method stub
         XYChart.Series<Number,Number> newSerie = new XYChart.Series<>();
-        Long now;
-       newSerie.getData().addAll(serie.getData());
-        for (Float item : data) {
-            now = System.currentTimeMillis() - startTime;
-            newSerie.getData().add(new XYChart.Data<>(now,item.floatValue()));
-            System.out.println("nuovo dato aggiunto ///"  + item.floatValue());
+        int last = oldSerie.getData().size();
+        newSerie.getData().addAll(oldSerie.getData());
+        for (Float item : newData) {            
+            newSerie.getData().add(new XYChart.Data<>(last,item.floatValue()));
+            last += 5;
+            System.out.println("nuovo dato aggiunto: "  + item.floatValue());
         }
-                           
-       
         return newSerie;
-        
-        
-    }
-
-    
+    }    
 }

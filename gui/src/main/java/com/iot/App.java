@@ -1,14 +1,12 @@
 package com.iot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
@@ -43,9 +41,10 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         console= null;
         final Timer clockTimer = new Timer();
-        List<String> baud = new ArrayList<>();
-        start = System.currentTimeMillis();
+      
         ArrayList<String> rawData = new ArrayList<>();
+        
+
         valveOpeningDegrees = 0;
         state = -1;
         smartLight= false;
@@ -63,10 +62,7 @@ public class App extends Application {
         }
         final ComboBox<String> portComboBox = p.createSelector(port);
 
-        //check for presenc of com port
-        portComboBox.getSelectionModel().select(0);
-        
-
+        //check for presence of com port
         portComboBox.getSelectionModel().selectedItemProperty()
         .addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observable,
@@ -84,16 +80,11 @@ public class App extends Application {
                 } catch (Exception e) {
                     System.out.println(e.toString());
                 }
-
-
             }
     });
 
-
-
-
         series.setName("water");
-        series.getData().add(new XYChart.Data((System.currentTimeMillis() - start), 0));
+        series.getData().add(new XYChart.Data(0, 0));
         
         // Creates a slider
         Slider slider = p.createSlider();
@@ -115,7 +106,7 @@ public class App extends Application {
         
         LineChart<Number,Number> chart = p.createLineChart();
         chart.getData().add(series);
-        
+        chart.setAnimated(false);
         HBox selectors = new HBox();
         selectors.getChildren().add(portComboBox);
         
@@ -146,16 +137,18 @@ public class App extends Application {
                         System.out.println("UPDATE");
                         rawData.clear();
                         try {
-                            rawData.addAll(console.retiriveMessages());                          
+                            rawData.addAll(console.retiriveMessages());
                             
                         } catch (Exception e) {
                             // TODO: handle exception
                             System.out.println("error in serial communiation");
                         }
-                        series = p.populateChart(parser.getNewChartData(rawData), series, start);
+                        series = p.populateChart(parser.getNewChartData(rawData), series);
+                        chart.getData().clear();
+                        chart.getData().add(series);                        
                         valveOpeningDegrees = parser.getServoPosition(rawData);
-                        state = parser.getState(rawData);
-                        smartLight = parser.getSmartLight(rawData);
+                        //state = parser.getState(rawData);
+                        //smartLight = parser.getSmartLight(rawData);
                     }
                 });
             }

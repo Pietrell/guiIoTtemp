@@ -1,10 +1,7 @@
 package com.iot;
-import java.io.BufferedReader;
-import java.io.Console;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 
-import com.iot.SerialCommChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SerialParser  {
 	private SerialCommChannel ch;
@@ -14,21 +11,30 @@ public class SerialParser  {
 	}
 
 	public ArrayList<Float> getNewChartData(ArrayList<String> rawSerial){
+		
 		ArrayList<Float> data = new ArrayList<>();
 		for (String item : rawSerial) {
 			//System.out.println(item);
 			String[] parts = item.split("-");
-			System.out.println(parts[0]);
-			System.out.println(parts[1]);
-			if(parts.length==2 && parts[0]=="waterlevel" ){
-				if(parts[1]!="")
-				if(!data.add(Float.parseFloat(parts[1]) )){
-					System.out.println("non viene inserito niene");
-						
-				}
+			
+			
+			System.out.println("valore di " + parts[0] +  "valore letto: " +  parts[1]);
+			parts[0].trim();
+			parts[0].toLowerCase();
 
+			if(parts[0].equals(("waterlevel"))){
+				if(parts[1]!="")
+				if(!data.add(Float.parseFloat(parts[1]))){					
+					System.out.println("non viene inserito niene");						
+				}
 			}
 		}
+
+		System.out.println("-----------------INIZIO STAMPA DATI ------------------");	
+		for (Float float1 : data) {
+			System.out.println(float1.toString());
+		}
+		System.out.println("--------------FINE STAMPA DATI --------------");
 		return data;
 	}
 
@@ -39,6 +45,8 @@ public class SerialParser  {
 		for (int i = rawSerial.size() - 1; i >0  ; i--) {
 			msg = rawSerial.get(i).split("-");
 			System.out.print(msg.length);
+			msg[0].trim();
+			msg[0].toLowerCase();
 			if( msg[0]=="servo"){
 				pos = Float.parseFloat(msg[1].toString());
 				return pos;
@@ -47,51 +55,33 @@ public class SerialParser  {
 		return 0 ;
 	}
 	   
-	public int getState(ArrayList<String> rawSerial){
-		int state = -1 ;
+	public String getState(ArrayList<String> rawSerial){
+		
 		String[] msg;
 		//inversed read of data to take only the last state
 		for (int i = rawSerial.size() - 1; i >0  ; i--) {
 			msg = rawSerial.get(i).split("-");
+			msg[0].trim();
+			msg[0].toLowerCase();
 			if(msg[0]=="state"){
-
-				switch (msg[1]) {
-					case "normal":
-						return 0;
-					case "prealarm":
-					return 1;
-				
-					case "alarm":
-					return 2;
-				
-				
-					default:
-
-						return -1;
+				return msg[1];
 				}
-				
 			}
-		}
-		return -1 ;
+		return "unknown" ;
 	}
 
-	public boolean getSmartLight(ArrayList<String> rawSerial){
-		int state = -1 ;
+	public String getSmartLight(ArrayList<String> rawSerial){
+		
 		String[] msg;
 		//inversed read of data to take only the last state
 		for (int i = rawSerial.size() - 1; i >0  ; i--) {
 			msg = rawSerial.get(i).split("-");
+			msg[0].trim();
+			msg[0].toLowerCase();
 			if(msg[0]=="smartlight"){
-				switch (msg[1]) {
-					case "off":
-						return false;
-					case "on":
-						return true;
-					default:
-						return false;
-				}				
+				return msg[1] ;
 			}
 		}
-		return false ;
+		return "unknown" ;
 	}
 }
