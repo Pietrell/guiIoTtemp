@@ -24,6 +24,7 @@ public class SerialParser  {
 				if(parts[1]!="")
 				data.add(Float.parseFloat(parts[1]) );
 			}
+			System.out.println(parts[1]);
 		}
 		return data;
 	}

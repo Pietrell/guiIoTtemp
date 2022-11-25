@@ -41,6 +41,7 @@ public class App extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        console= null;
         final Timer clockTimer = new Timer();
         List<String> baud = new ArrayList<>();
         start = System.currentTimeMillis();
@@ -65,44 +66,31 @@ public class App extends Application {
         //check for presenc of com port
         portComboBox.getSelectionModel().select(0);
         
-        // if(port.size()!=0){
-        //     console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 9600);
-        //     // console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 
-        //     //                 Integer.valueOf( baudRateComboBox.getItems().get(2)));
-            
-        // }else{
-        //     System.out.println("common interface port not found, did you connect Arduino?");
-        // }
-        //communication update based on combobox values
-        // baudRateComboBox.setOnAction((event) -> {
-           
-        //     String pt = portComboBox.getValue().toString();
-        //     int b = Integer.valueOf( baudRateComboBox.getValue().toString());
-        //     try {
-        //         console = updateChannel(console,pt ,b );
-                
-        //     } catch (Exception e) {
-        //         System.out.println(e.toString());
-        //     }
-   
-        // });
 
-        portComboBox.setOnAction((event) -> {
-           
-            String pt = portComboBox.getValue();
-            int b = Integer.valueOf( portComboBox.getValue());
-            try {
-                if(console!=null){
-                    console.close();
-                    console = new SerialCommChannel(portComboBox.getSelectionModel().getSelectedItem().toString(), 9600);
+        portComboBox.getSelectionModel().selectedItemProperty()
+        .addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+                System.out.println("Value is: "+newValue);
+                try {
+                    if(console!=null){
+                        console.close();
+                        console = new SerialCommChannel(newValue, 9600);
+                    }else{
+                        console = new SerialCommChannel(newValue, 9600);
+                    }
+                    //console = updateChannel(console,pt ,b );
+                    
+                } catch (Exception e) {
+                    System.out.println(e.toString());
                 }
-                console = updateChannel(console,pt ,b );
-                
-            } catch (Exception e) {
-                System.out.println(e.toString());
+
+
             }
-            
-        });
+    });
+
+
+
 
         series.setName("water");
         series.getData().add(new XYChart.Data((System.currentTimeMillis() - start), 0));
@@ -154,13 +142,14 @@ public class App extends Application {
                 Platform.runLater(new Runnable() {
                     @Override  public void run() {
                         /*methods to execute every n seconds */
+                        System.out.println("UPDATE");
                         rawData.clear();
                         try {
                             rawData.addAll(console.retiriveMessages());                          
                             
                         } catch (Exception e) {
                             // TODO: handle exception
-                            System.out.println("no messages in serial communiation");
+                            System.out.println("error in serial communiation");
                         }
                         series = p.populateChart(parser.getNewChartData(rawData), series, start);
                         valveOpeningDegrees = parser.getServoPosition(rawData);
@@ -169,7 +158,7 @@ public class App extends Application {
                     }
                 });
             }
-        }, 0, 500  // Sleep for 1 seconds since that is how long it is between
+        }, 0, 1000  // Sleep for 1 seconds since that is how long it is between
         );              
 
 
