@@ -10,27 +10,45 @@ public class SerialParser {
 
 		ArrayList<Float> data = new ArrayList<>();
 		for (String item : rawSerial) {
-			// System.out.println(item);
 			String[] parts = item.split("-");
-
-			System.out.println("valore di " + parts[0] + "valore letto: " + parts[1]);
 			parts[0].trim();
 			parts[0].toLowerCase();
-
 			if (parts[0].equals(("waterlevel"))) {
 				if (parts[1] != "")
-					if (!data.add(Float.parseFloat(parts[1]))) {
-						System.out.println("non viene inserito niene");
-					}
+					data.add(Float.parseFloat(parts[1]));					
 			}
 		}
-
-		System.out.println("-----------------INIZIO STAMPA DATI ------------------");
-		for (Float float1 : data) {
-			System.out.println(float1.toString());
-		}
-		System.out.println("--------------FINE STAMPA DATI --------------");
 		return data;
+	}
+
+	public String getState(ArrayList<String> rawSerial,String preValString) {
+
+		String[] msg;
+		// inversed read of data to take only the last state
+		for (int i = rawSerial.size() - 1; i > 0; i--) {
+			msg = rawSerial.get(i).split("-");
+			msg[0].trim();
+			msg[0].toLowerCase();
+			if (msg[0].equals("state")) {
+				return msg[1];
+			}
+		}
+		return preValString;
+	}
+
+	public String getSmartLight(ArrayList<String> rawSerial, String preValString) {
+		String[] msg;
+
+		// inversed read of data to take only the last state
+		for (String item : rawSerial) {			
+			msg = item.split("-");
+			msg[0].trim();			
+			msg[0].toLowerCase();			
+			if (msg[0].equals("smartlight")){
+				return msg[1];
+			}
+		}
+		return preValString;
 	}
 
 	public float getServoPosition(ArrayList<String> rawSerial) {
@@ -50,33 +68,4 @@ public class SerialParser {
 		return 0;
 	}
 
-	public String getState(ArrayList<String> rawSerial) {
-
-		String[] msg;
-		// inversed read of data to take only the last state
-		for (int i = rawSerial.size() - 1; i > 0; i--) {
-			msg = rawSerial.get(i).split("-");
-			msg[0].trim();
-			msg[0].toLowerCase();
-			if (msg[0] == "state") {
-				return msg[1];
-			}
-		}
-		return "unknown";
-	}
-
-	public String getSmartLight(ArrayList<String> rawSerial) {
-
-		String[] msg;
-		// inversed read of data to take only the last state
-		for (int i = rawSerial.size() - 1; i > 0; i--) {
-			msg = rawSerial.get(i).split("-");
-			msg[0].trim();
-			msg[0].toLowerCase();
-			if (msg[0] == "smartlight") {
-				return msg[1];
-			}
-		}
-		return "unknown";
-	}
 }

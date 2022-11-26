@@ -27,6 +27,6 @@ public interface CommChannel {
 	 */
 	boolean isMsgAvailable();
 
-	ArrayList<String> retiriveMessages();
+	ArrayList<String> retiriveMessages() throws Exception;
 
 }

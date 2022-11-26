@@ -110,13 +110,11 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 	}
 
 	@Override
-	public ArrayList<String> retiriveMessages() {
+	public ArrayList<String> retiriveMessages() throws Exception {
 		ArrayList<String> msgs = new ArrayList<>();
-		if (isMsgAvailable()) {
-			for (String ms : queue) {
-				msgs.add(ms);
-			}
-		}
+		while (isMsgAvailable()) {
+			msgs.add(queue.take());
+			}		
 		return msgs;
 	}
 }

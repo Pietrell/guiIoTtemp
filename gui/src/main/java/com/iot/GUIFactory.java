@@ -14,8 +14,6 @@ public interface GUIFactory {
 
     ComboBox<String> createSelector(List<String> options);
 
-    Text createText(String text);
-
     LineChart<Number, Number> createLineChart();
 
     XYChart.Series<Number, Number> populateChart(ArrayList<Float> data, XYChart.Series<Number, Number> serie);

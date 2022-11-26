@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.stage.Screen;
 import javafx.scene.control.Slider;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -29,12 +28,6 @@ public class GUIFactoryImpl implements GUIFactory {
         return b;
     }
 
-    //TODO: Fix warning
-    @Override
-    public Text createText(String text) {
-        Text t = new Text(text);
-        return t;
-    }
 
     @Override
     public LineChart<Number, Number> createLineChart() {
@@ -56,6 +49,7 @@ public class GUIFactoryImpl implements GUIFactory {
 
         return chart;
     }
+
     //TODO: Fix warning
     @Override
     public Slider createSlider() {
@@ -78,12 +72,21 @@ public class GUIFactoryImpl implements GUIFactory {
     public XYChart.Series<Number, Number> populateChart(ArrayList<Float> newData,
             XYChart.Series<Number, Number> oldSerie) {
         XYChart.Series<Number, Number> newSerie = new XYChart.Series<>();
-        int last = oldSerie.getData().size();
-        newSerie.getData().addAll(oldSerie.getData());
+       int last = (int)oldSerie.getData().get(oldSerie.getData().size() -1 ).getXValue(); //ottengo un Number, lo casto a int
+        int oldLen = oldSerie.getData().size() ;
+        if(oldSerie.getData().size()> 50){          
+            //tolgo i primi n valori presenti nella serie per la quantita di dati mostrati
+            for(int i=newData.size(); i < oldLen; i++, last++)
+            {
+                    newSerie.getData().add(oldSerie.getData().get(i));
+            }
+        }
+        else{
+            newSerie.getData().addAll(oldSerie.getData());
+        }       
         for (Float item : newData) {
             newSerie.getData().add(new XYChart.Data<>(last, item.floatValue()));
-            last += 5;
-            System.out.println("nuovo dato aggiunto: " + item.floatValue());
+            last ++;
         }
         return newSerie;
     }
