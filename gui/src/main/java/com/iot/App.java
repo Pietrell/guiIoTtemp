@@ -39,9 +39,9 @@ public class App extends Application {
     long start;
 
     @Override
-    public void start( Stage stage) throws Exception {
-        //TODO: aggiungere label per indicare stato e PIR, 
-        
+    public void start(Stage stage) throws Exception {
+        // TODO: aggiungere label per indicare stato e PIR,
+
         console = null;
         final Timer clockTimer = new Timer();
         final Label stateLabel, lightLabel, valveLabel;
@@ -62,15 +62,15 @@ public class App extends Application {
         stateLabel = new Label("state");
         stateLabel.setScaleX(2);
         stateLabel.setScaleY(2);
-        
-        lightLabel =  new Label("SmartLight");
+
+        lightLabel = new Label("SmartLight");
         lightLabel.setScaleX(2);
         lightLabel.setScaleY(2);
 
         valveLabel = new Label("valve");
-       
+
         final ComboBox<String> portComboBox = p.createSelector(port);
-        
+
         // check for presence of com port
         portComboBox.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<String>() {
@@ -105,9 +105,9 @@ public class App extends Application {
 
                 if (state.equals("alarm")) {
                     valveOpeningDegrees = newVal.floatValue();
-                    valveOpeningDegrees = valveOpeningDegrees * (float)1.8 ; 
-                    
-                    valveLabel.setText( String.format("%.2f",   valveOpeningDegrees));                    
+                    valveOpeningDegrees = valveOpeningDegrees * (float) 1.8;
+
+                    valveLabel.setText(String.format("%.2f", valveOpeningDegrees));
                     console.sendMsg("valve-" + valveOpeningDegrees);
                 }
 
@@ -117,18 +117,17 @@ public class App extends Application {
         VBox slid = new VBox(slider, valveLabel);
         slid.setSpacing(150);
         slid.setAlignment(Pos.CENTER);
-        
+
         LineChart<Number, Number> chart = p.createLineChart();
         chart.getData().add(series);
         chart.setAnimated(false);
         chart.setCreateSymbols(false);
-       
+
         HBox selectors = new HBox();
         selectors.getChildren().add(portComboBox);
         selectors.getChildren().add(stateLabel);
         selectors.getChildren().add(lightLabel);
         selectors.setSpacing(50);
-
 
         BorderPane root = new BorderPane(chart, selectors, null, null, slid); // center,top,right,bottom,left
         BorderPane.setAlignment(slid, Pos.CENTER_LEFT);
@@ -138,7 +137,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
-        // time driven event 
+        // time driven event
         clockTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -146,23 +145,23 @@ public class App extends Application {
                     @Override
                     public void run() {
                         /* methods to execute every n milliseconds */
-                        //System.out.println("UPDATE");
+                        // System.out.println("UPDATE");
                         rawData.clear();
                         try {
                             rawData.addAll(console.retiriveMessages());
 
                         } catch (Exception e) {
-                            
+
                             System.out.println("error in serial communiation: no port selected");
                         }
                         series = p.populateChart(parser.getNewChartData(rawData), series);
                         chart.getData().clear();
                         chart.getData().add(series);
-                        //ottengo stato
+                        // ottengo stato
                         state = parser.getState(rawData, state);
                         stateLabel.setText(state);
-                        //ottengo smart light
-                        smartLight = parser.getSmartLight(rawData,smartLight);
+                        // ottengo smart light
+                        smartLight = parser.getSmartLight(rawData, smartLight);
                         lightLabel.setText(smartLight);
                     }
                 });

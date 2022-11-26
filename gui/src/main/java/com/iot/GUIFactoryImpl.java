@@ -22,12 +22,11 @@ public class GUIFactoryImpl implements GUIFactory {
 
     @Override
     public ComboBox<String> createSelector(List<String> options) {
-        
+
         ComboBox<String> b = new ComboBox<>();
         b.setItems(FXCollections.observableArrayList(options));
         return b;
     }
-
 
     @Override
     public LineChart<Number, Number> createLineChart() {
@@ -50,10 +49,10 @@ public class GUIFactoryImpl implements GUIFactory {
         return chart;
     }
 
-    //TODO: Fix warning
+    // TODO: Fix warning
     @Override
     public Slider createSlider() {
-       
+
         Slider slider = new Slider(0, 100, 0);
         slider.setCenterShape(true);
         slider.setShowTickMarks(true);
@@ -72,21 +71,20 @@ public class GUIFactoryImpl implements GUIFactory {
     public XYChart.Series<Number, Number> populateChart(ArrayList<Float> newData,
             XYChart.Series<Number, Number> oldSerie) {
         XYChart.Series<Number, Number> newSerie = new XYChart.Series<>();
-       int last = (int)oldSerie.getData().get(oldSerie.getData().size() -1 ).getXValue(); //ottengo un Number, lo casto a int
-        int oldLen = oldSerie.getData().size() ;
-        if(oldSerie.getData().size()> 50){          
-            //tolgo i primi n valori presenti nella serie per la quantita di dati mostrati
-            for(int i=newData.size(); i < oldLen; i++, last++)
-            {
-                    newSerie.getData().add(oldSerie.getData().get(i));
+        int last = (int) oldSerie.getData().get(oldSerie.getData().size() - 1).getXValue(); // ottengo un Number, lo
+                                                                                            // casto a int
+        int oldLen = oldSerie.getData().size();
+        if (oldSerie.getData().size() > 50) {
+            // tolgo i primi n valori presenti nella serie per la quantita di dati mostrati
+            for (int i = newData.size(); i < oldLen; i++, last++) {
+                newSerie.getData().add(oldSerie.getData().get(i));
             }
-        }
-        else{
+        } else {
             newSerie.getData().addAll(oldSerie.getData());
-        }       
+        }
         for (Float item : newData) {
             newSerie.getData().add(new XYChart.Data<>(last, item.floatValue()));
-            last ++;
+            last++;
         }
         return newSerie;
     }

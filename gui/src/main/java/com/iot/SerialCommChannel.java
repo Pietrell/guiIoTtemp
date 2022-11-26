@@ -1,10 +1,12 @@
 package com.iot;
+
 import java.util.ArrayList;
 import java.util.concurrent.*;
 import jssc.*;
 
 /**
  * Comm channel implementation based on serial port.
+ * 
  * @author aricci
  */
 public class SerialCommChannel implements CommChannel, SerialPortEventListener {
@@ -72,36 +74,28 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 		}
 	}
 
-	//TODO: Fix warning
+	// TODO: Fix warning
 	public void serialEvent(SerialPortEvent event) {
 		/* if there are bytes received in the input buffer */
 		if (event.isRXCHAR()) {
 			try {
 				String msg = serialPort.readString(event.getEventValue());
-
 				msg = msg.replaceAll("\r", "");
-
 				currentMsg.append(msg);
-
 				boolean goAhead = true;
-
 				while (goAhead) {
 					String msg2 = currentMsg.toString();
-
 					int index = msg2.indexOf("\n");
 					if (index >= 0) {
 						queue.put(msg2.substring(0, index));
-
 						currentMsg = new StringBuffer("");
 						if (index + 1 < msg2.length()) {
 							currentMsg.append(msg2.substring(index + 1));
-
 						}
 					} else {
 						goAhead = false;
 					}
 				}
-
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				System.out.println("Error in receiving string from COM-port: " + ex);
@@ -114,7 +108,7 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 		ArrayList<String> msgs = new ArrayList<>();
 		while (isMsgAvailable()) {
 			msgs.add(queue.take());
-			}		
+		}
 		return msgs;
 	}
 }

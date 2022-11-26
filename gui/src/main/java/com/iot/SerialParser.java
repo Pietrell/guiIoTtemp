@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 public class SerialParser {
 
-	public SerialParser() throws Exception { }
+	public SerialParser() throws Exception {
+	}
 
 	public ArrayList<Float> getNewChartData(ArrayList<String> rawSerial) {
 
@@ -15,13 +16,13 @@ public class SerialParser {
 			parts[0].toLowerCase();
 			if (parts[0].equals(("waterlevel"))) {
 				if (parts[1] != "")
-					data.add(Float.parseFloat(parts[1]));					
+					data.add(Float.parseFloat(parts[1]));
 			}
 		}
 		return data;
 	}
 
-	public String getState(ArrayList<String> rawSerial,String preValString) {
+	public String getState(ArrayList<String> rawSerial, String preValString) {
 
 		String[] msg;
 		// inversed read of data to take only the last state
@@ -40,11 +41,11 @@ public class SerialParser {
 		String[] msg;
 
 		// inversed read of data to take only the last state
-		for (String item : rawSerial) {			
+		for (String item : rawSerial) {
 			msg = item.split("-");
-			msg[0].trim();			
-			msg[0].toLowerCase();			
-			if (msg[0].equals("smartlight")){
+			msg[0].trim();
+			msg[0].toLowerCase();
+			if (msg[0].equals("smartlight")) {
 				return msg[1];
 			}
 		}
